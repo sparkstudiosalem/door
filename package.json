@@ -7,5 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "SEE LICENSE IN License.md"
+  "license": "SEE LICENSE IN License.md",
+  "devDependencies": {
+    "eslint-config-prettier": "8.5.0",
+    "typescript": "4.9.3"
+  }
 }
