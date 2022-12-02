@@ -1,10 +1,11 @@
 {
-  "name": "door",
-  "version": "1.0.0",
+  "name": "@sparkstudiosalem/door",
+  "version": "0.0.1",
   "description": "HTTP interface to ACCX Open Access",
+  "repository": "https://github.com/sparkstudiosalem/door.git",
   "main": "index.js",
   "scripts": {
-    "build": "tsc app/app.ts",
+    "publish": "tsc && npm publish",
     "server": "concurrently 'nodemon app/app.js' 'tsc --watch'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +20,9 @@
   },
   "dependencies": {
     "express": "4.18.2"
-  }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": ["app/*.js"]
 }
