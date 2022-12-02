@@ -1,24 +1,32 @@
 import express from "express";
 import { SerialPort } from "serialport";
-import { ReadlineParser } from "@serialport/parser-readline";
+// import { ReadlineParser } from "@serialport/parser-readline";
 
 export default function () {
   const lines: string[] = [];
   const errors: string[] = [];
 
-  const sport = new SerialPort({ path: "/dev/ttyAMA0", baudRate: 9600 }, (err) => {
+  const sport = new SerialPort({
+    path: "/dev/ttyAMA0",
+    baudRate: 9600,
+  }, (err) => {
     if (err) {
       errors.push(err.toString());
       console.log(`Encountered an error while opening ttyAMA0 ${err}`);
     }
   });
 
-  const parser = new ReadlineParser();
-  sport.pipe(parser);
+  // const parser = new ReadlineParser();
+  // sport.pipe(parser);
 
-  parser.on("data", (line: string) => {
-    lines.push(line);
-    console.log(line);
+  // parser.on("data", (line: string) => {
+  //   lines.push(line);
+  //   console.log(line);
+  // });
+
+  sport.on("data", (data) => {
+    console.log(`Received data directly on the serialport ${data}`);
+    lines.push(data);
   });
 
   sport.on("error", (err) => {
@@ -28,12 +36,14 @@ export default function () {
     }
   });
 
-  sport.write("?\n", (err) => {
-    if (err) {
-      errors.push(err.toString());
-      console.log(`Encountered an error while writing to ttyAMA0 ${err}`);
-    }
-  });
+  setInterval(() => {
+    sport.write("?\n", (err) => {
+      if (err) {
+        errors.push(err.toString());
+        console.log(`Encountered an error while writing to ttyAMA0 ${err}`);
+      }
+    });
+  }, 5000);
 
   const app = express();
 
