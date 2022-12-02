@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "description": "HTTP interface to ACCX Open Access",
   "repository": "https://github.com/sparkstudiosalem/door.git",
-  "main": "index.js",
+  "main": "app/app.js",
   "scripts": {
     "publish": "tsc && npm publish",
-    "server": "concurrently 'nodemon app/app.js' 'tsc --watch'",
+    "server": "concurrently 'nodemon --inspect app/app.js' 'tsc --watch'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -19,10 +19,14 @@
     "typescript": "4.9.3"
   },
   "dependencies": {
-    "express": "4.18.2"
+    "@serialport/parser-readline": "10.5.0",
+    "express": "4.18.2",
+    "serialport": "10.5.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "files": ["app/*.js"]
+  "files": [
+    "app/*.js"
+  ]
 }
