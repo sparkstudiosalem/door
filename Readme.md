@@ -13,5 +13,5 @@ Compile the server and publish the package the private npm registry with this
 command.
 
 ```
-$ npm run publish
+$ npm run push
 ```

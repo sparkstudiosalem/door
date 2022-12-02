@@ -5,7 +5,7 @@
   "repository": "https://github.com/sparkstudiosalem/door.git",
   "main": "app/app.js",
   "scripts": {
-    "publish": "tsc && npm publish",
+    "push": "tsc && npm publish",
     "server": "concurrently 'nodemon --inspect app/app.js' 'tsc --watch'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
