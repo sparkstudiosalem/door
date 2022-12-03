@@ -11,7 +11,7 @@ The companion Door Runner app on the Raspberry Pi consumes the package and runs 
 
 ### Install tooling
 
-* [nodejs](https://nodejs.org/en/)
+- [nodejs](https://nodejs.org/en/)
 
 ### Install project dependencies
 
@@ -36,3 +36,7 @@ command.
 ```
 $ npm run push
 ```
+
+## Resources
+
+- [Firmware source](https://github.com/heatsynclabs/Open_Access_Control_Ethernet/blob/master/Open_Access_Control_Ethernet.ino)

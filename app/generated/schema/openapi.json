@@ -1,0 +1,38 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Spark Studio Salem ACCX Open Access 4.0 API",
+    "description": "This service provides a method for interacting with the ACCX Open Access 4.0 module.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "paths": {
+    "/time": {
+      "get": {
+        "operationId": "timeGet",
+        "x-eov-operation-handler": "timeGet",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DateTime"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DateTime": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2020-01-01T00:00:00.000Z"
+      }
+    }
+  }
+}
