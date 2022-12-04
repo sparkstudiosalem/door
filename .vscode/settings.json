@@ -1,0 +1,8 @@
+{
+  "search.useGlobalIgnoreFiles": false,
+  "files.exclude": {
+    "**/build/**": true,
+    "package-lock.json": true
+  },
+  "editor.formatOnSave": true
+}
