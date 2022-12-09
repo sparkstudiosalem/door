@@ -7,7 +7,7 @@ type User = components["schemas"]["User"];
 const MAX_USERS = 200;
 
 export default async function getDeviceUsers() {
-  let users: readonly User[];
+  let users: readonly User[] | undefined;
 
   return runSession({
     command: "u",
@@ -19,7 +19,7 @@ export default async function getDeviceUsers() {
         users = users ? [...users, nextUser] : [nextUser];
       }
 
-      if (users.length === MAX_USERS) {
+      if (users?.length === MAX_USERS) {
         onComplete(users);
       }
     },
