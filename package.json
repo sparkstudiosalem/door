@@ -1,6 +1,6 @@
 {
   "name": "@sparkstudiosalem/door",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "HTTP interface to ACCX Open Access",
   "repository": "https://github.com/sparkstudiosalem/door.git",
   "source": "app/main.ts",
