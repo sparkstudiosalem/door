@@ -57,9 +57,9 @@ export default function parseAccxDate(accxDate: string): Date {
     );
   }
 
-  const year = parseInt(yearString, 10) + 1999;
+  const year = parseInt(yearString, 10) + 2000;
   const month = parseInt(monthString, 10);
-  const day = parseInt(dayString, 10) + 1;
+  const day = parseInt(dayString, 10);
 
   const datePart = `${year.toString().padStart(4, "0")}-${month
     .toString()
