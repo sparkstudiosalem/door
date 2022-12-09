@@ -10,6 +10,7 @@ export interface paths {
   };
   "/user/{userId}": {
     get: operations["userGet"];
+    delete: operations["userDelete"];
   };
   "/users": {
     get: operations["usersGet"];
@@ -69,6 +70,23 @@ export interface operations {
           readonly "application/json": components["schemas"]["User"];
         };
       };
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  userDelete: {
+    parameters: {
+      readonly path: {
+        userId: components["schemas"]["UserId"];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: never;
       /** @description Not Found */
       404: {
         content: {

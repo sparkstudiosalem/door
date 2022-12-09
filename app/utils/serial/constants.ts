@@ -1,8 +1,10 @@
+export const REMOVE_USER = "r" as const;
 export const SHOW_ALL_USERS = "a" as const;
 export const SHOW_DATE = "d" as const;
 export const SHOW_USER = "s" as const;
 
 export type COMMANDS =
+  | typeof REMOVE_USER
   | typeof SHOW_ALL_USERS
   | typeof SHOW_DATE
   | typeof SHOW_USER;

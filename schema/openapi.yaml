@@ -18,6 +18,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/DateTime"
   /user/{userId}:
+    delete:
+      operationId: userDelete
+      x-eov-operation-handler: userDelete
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
     get:
       operationId: userGet
       x-eov-operation-handler: userGet
