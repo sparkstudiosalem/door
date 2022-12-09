@@ -2,6 +2,7 @@ import parseAccxUser from "./parseAccxUser";
 
 describe("parseAccxUser", () => {
   test.each([
+    ["0:0:0  1/1/0 SUN Alarm level changed to 0\r", undefined],
     [
       "186	255	4294967295 \r",
       {

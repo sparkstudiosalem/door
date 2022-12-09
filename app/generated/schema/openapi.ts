@@ -27,6 +27,7 @@ export interface components {
       readonly tag: string;
       readonly userMask: components["schemas"]["UserMask"];
     };
+    /** @description A UserMask is a byte value between 0 and 255 that may be used in user operations to apply actions to large swaths of users simultaneously, instead of applying updates user-by-user. */
     readonly UserMask: number;
   };
   responses: never;

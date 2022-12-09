@@ -15,7 +15,9 @@ export default async function getDeviceUsers() {
       console.log(`getDeviceUsers data: ${JSON.stringify(data)}`);
 
       const nextUser = parseAccxUser(data);
-      users = users ? [...users, nextUser] : [nextUser];
+      if (nextUser) {
+        users = users ? [...users, nextUser] : [nextUser];
+      }
 
       if (users.length === MAX_USERS) {
         onComplete(users);
