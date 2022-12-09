@@ -28,6 +28,14 @@ with this command.
 $ npm run server
 ```
 
+### Run Tests
+
+Tests are run with [jest](https://jestjs.io/).
+
+```
+$ npx jest --watch
+```
+
 ## Publishing
 
 Compile the server and publish the package the private npm registry with this
