@@ -10,7 +10,7 @@ export default async function getDeviceUsers() {
   let users: readonly User[] | undefined;
 
   return runSession({
-    command: "u",
+    command: "a",
     onData: (onComplete: (users: readonly User[]) => void, data: string) => {
       console.log(`getDeviceUsers data: ${JSON.stringify(data)}`);
 
