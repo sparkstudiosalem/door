@@ -14,8 +14,6 @@ export default async function getDeviceUsers() {
     onData: (onComplete: (users: readonly User[]) => void, data: string) => {
       const nextUser = parseAccxUser(data);
 
-      console.log(`getDeviceUsers data: ${JSON.stringify({ data, nextUser })}`);
-
       if (nextUser) {
         users = users ? [...users, nextUser] : [nextUser];
       }

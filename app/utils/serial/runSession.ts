@@ -1,5 +1,8 @@
 import { SerialPort } from "serialport";
 import { ReadlineParser } from "@serialport/parser-readline";
+import createLogger from "../createLogger";
+
+const log = createLogger(__filename);
 
 export async function runSession<TResolveType>({
   command,
@@ -14,10 +17,13 @@ export async function runSession<TResolveType>({
   });
 
   return new Promise<TResolveType>((resolve, reject) => {
-    const parser = new ReadlineParser();
+    const parser = new ReadlineParser({ delimiter: "\r" });
     serialPortStream.pipe(parser);
 
-    parser.on("data", onData.bind(null, resolve));
+    parser.on("data", (data: string) => {
+      log.info(JSON.stringify({ data }));
+      onData(resolve, data);
+    });
 
     serialPortStream.on("error", (err) => {
       if (err) {
