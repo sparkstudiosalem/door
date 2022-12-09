@@ -1,10 +1,10 @@
 {
   "name": "@sparkstudiosalem/door",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "HTTP interface to ACCX Open Access",
   "repository": "https://github.com/sparkstudiosalem/door.git",
   "source": "app/main.ts",
-  "main": "dist/package/main.js",
+  "main": "build/package/app/main.js",
   "scripts": {
     "generate-openapi-types": "mkdir -p ./app/generated/schema && openapi-typescript ./schema/openapi.yaml --output ./app/generated/schema/openapi.ts --immutable-types --default-non-nullable --alphabetize --path-params-as-types --support-array-length",
     "generate-json-schema": "mkdir -p ./app/generated/schema && js-yaml ./schema/openapi.yaml > ./app/generated/schema/openapi.json",
