@@ -1,7 +1,7 @@
 // '0:0:0  1/1/0 SUN'
 export default function parseAccxDate(accxDate: string): Date {
   const parts = accxDate.split(/\s+/);
-  if (parts.length !== 3) {
+  if (parts.length !== 4) {
     throw new Error(
       `Unrecognized ACCX date format ${JSON.stringify(
         accxDate
@@ -48,8 +48,8 @@ export default function parseAccxDate(accxDate: string): Date {
     );
   }
 
-  const [yearString, monthString, dayString] = dateParts;
-  if (!yearString || !monthString || !dayString) {
+  const [monthString, dayString, yearString] = dateParts;
+  if (!dayString || !monthString || !yearString) {
     throw new Error(
       `Unrecognized ACCX date format ${JSON.stringify(
         accxDate
@@ -57,10 +57,20 @@ export default function parseAccxDate(accxDate: string): Date {
     );
   }
 
-  const year = parseInt(yearString, 10);
-  const monthIndex = parseInt(monthString, 10);
-  const day = parseInt(dayString, 10);
+  const year = parseInt(yearString, 10) + 1999;
+  const month = parseInt(monthString, 10);
+  const day = parseInt(dayString, 10) + 1;
+
+  const datePart = `${year.toString().padStart(4, "0")}-${month
+    .toString()
+    .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+
+  const timePart = `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds
+    .toString()
+    .padStart(3, "0")}Z`;
 
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date
-  return new Date(year, monthIndex, day, hours, minutes, seconds, milliseconds);
+  return new Date(`${datePart}T${timePart}`);
 }
