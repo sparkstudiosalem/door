@@ -10,7 +10,8 @@
     "generate-json-schema": "mkdir -p ./app/generated/schema && js-yaml ./schema/openapi.yaml > ./app/generated/schema/openapi.json",
     "generate": "npm run generate-openapi-types && npm run generate-json-schema",
     "push": "npm run generate && tsc && npm publish",
-    "server": "npm run generate && concurrently 'nodemon --inspect ./build/package/app/main.js' 'tsc --watch'"
+    "server": "npm run generate && concurrently 'nodemon --inspect ./build/package/app/main.js' 'tsc --watch'",
+    "test": "npx jest"
   },
   "author": "",
   "license": "SEE LICENSE IN License.md",
