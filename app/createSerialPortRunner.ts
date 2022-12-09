@@ -6,18 +6,17 @@ async function runSession<TResolveType extends Promise<unknown>>(
   command: string,
   onData: (data: string) => TResolveType
 ) {
-  return new Promise<TResolveType>((resolve, reject) => {
-    const serialPortStream = new SerialPort({
-      path: "/dev/ttyAMA0",
-      baudRate: 9600,
-    });
+  const serialPortStream = new SerialPort({
+    path: "/dev/ttyAMA0",
+    baudRate: 9600,
+  });
 
+  return new Promise<TResolveType>((resolve, reject) => {
     const parser = new ReadlineParser();
     serialPortStream.pipe(parser);
 
     parser.on("data", async (data) => {
       const result = await onData(data);
-      serialPortStream.close();
       resolve(result);
     });
 
@@ -29,6 +28,8 @@ async function runSession<TResolveType extends Promise<unknown>>(
     });
 
     serialPortStream.write(`${command}\r`);
+  }).finally(() => {
+    serialPortStream.close();
   });
 }
 
