@@ -11,6 +11,15 @@ describe("parseAccxUser", () => {
         tag: "4294967295",
       },
     ],
+    [
+      "197\t255\t4294967295\r",
+      {
+        id: "197",
+        userMask: 255,
+        tag: "t4294967295",
+      },
+    ],
+    ["\r", undefined],
   ])("accxUser: %s user: %o", (accxUserString, user) => {
     expect(parseAccxUser(accxUserString)).toEqual(user);
   });
