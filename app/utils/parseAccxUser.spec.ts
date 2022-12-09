@@ -32,6 +32,7 @@ describe("parseAccxUser", () => {
     ["UserNum: Usermask: TagNum:", undefined],
     ["UserNum: Usermask: TagNum:", undefined],
     ["", undefined],
+    ["Bad user number!", undefined],
   ])("accxUser: %s user: %o", (accxUserString, user) => {
     expect(parseAccxUser(accxUserString)).toEqual(user);
   });

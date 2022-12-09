@@ -2,13 +2,11 @@ import { components } from "../../generated/schema/openapi";
 import parseAccxUser from "../parseAccxUser";
 import { runSession } from "./runSession";
 import createLogger from "../createLogger";
-import { SHOW_ALL_USERS, UNSET_TAG } from "./constants";
+import { MAX_USERS, SHOW_ALL_USERS, UNSET_TAG } from "./constants";
 
 const log = createLogger(__filename);
 
 type User = components["schemas"]["User"];
-
-const MAX_USERS = 200;
 
 export default async function getDeviceUsers() {
   let users: readonly User[] = [];

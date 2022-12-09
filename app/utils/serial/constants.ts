@@ -11,3 +11,7 @@ export type COMMANDS =
 // tag is set to this default value.
 // https://en.wikipedia.org/wiki/4,294,967,295
 export const UNSET_TAG = "4294967295"; // FFFF_FFFF
+
+export const MAX_USERS = 200;
+
+export const BAD_USER_NUMBER_MESSAGE = "Bad user number!";

@@ -1,11 +1,17 @@
 import { components } from "../generated/schema/openapi";
 import createLogger from "./createLogger";
+import { BAD_USER_NUMBER_MESSAGE } from "./serial/constants";
 
 const log = createLogger(__filename);
 
 export default function parseAccxUser(
   accxUserString: string
 ): components["schemas"]["User"] | undefined {
+  if (accxUserString === BAD_USER_NUMBER_MESSAGE) {
+    log.error("Bad user number");
+    return undefined;
+  }
+
   const userParts = accxUserString.split(/\s+/);
 
   if (userParts.length < 3) {
