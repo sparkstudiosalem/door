@@ -24,6 +24,10 @@ export default function parseAccxUser(
     return undefined;
   }
 
+  if (id === "UserNum:") {
+    return undefined;
+  }
+
   return {
     id,
     userMask: parseInt(userMask, 10),
