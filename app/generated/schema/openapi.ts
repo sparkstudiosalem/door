@@ -8,6 +8,9 @@ export interface paths {
   "/time": {
     get: operations["timeGet"];
   };
+  "/user/{userId}": {
+    get: operations["userGet"];
+  };
   "/users": {
     get: operations["usersGet"];
   };
@@ -22,11 +25,13 @@ export interface components {
      * @example 2020-01-01T00:00:00.000Z
      */
     readonly DateTime: string;
+    readonly ErrorResponse: string;
     readonly User: {
-      readonly id: string;
+      readonly id: components["schemas"]["UserId"];
       readonly tag: string;
       readonly userMask: components["schemas"]["UserMask"];
     };
+    readonly UserId: string;
     /** @description A UserMask is a byte value between 0 and 255 that may be used in user operations to apply actions to large swaths of users simultaneously, instead of applying updates user-by-user. */
     readonly UserMask: number;
   };
@@ -47,6 +52,27 @@ export interface operations {
       200: {
         content: {
           readonly "application/json": components["schemas"]["DateTime"];
+        };
+      };
+    };
+  };
+  userGet: {
+    parameters: {
+      readonly path: {
+        userId: components["schemas"]["UserId"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": components["schemas"]["User"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
         };
       };
     };

@@ -17,6 +17,29 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/DateTime"
+  /user/{userId}:
+    get:
+      operationId: userGet
+      x-eov-operation-handler: userGet
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: Not Found
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
   /users:
     get:
       operationId: usersGet
@@ -36,11 +59,13 @@ components:
       type: string
       format: date-time
       example: "2020-01-01T00:00:00.000Z"
+    ErrorResponse:
+      type: string
     User:
       type: object
       properties:
         id:
-          type: string
+          $ref: '#/components/schemas/UserId'
         userMask:
           $ref: '#/components/schemas/UserMask'
         tag:
@@ -49,6 +74,8 @@ components:
         - id
         - userMask
         - tag
+    UserId:
+      type: string
     UserMask:
       type: integer
       minimum: 0

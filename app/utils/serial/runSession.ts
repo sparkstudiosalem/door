@@ -1,6 +1,7 @@
 import { SerialPort } from "serialport";
 import { ReadlineParser } from "@serialport/parser-readline";
 import createLogger from "../createLogger";
+import { COMMANDS } from "./constants";
 
 const log = createLogger(__filename);
 
@@ -11,9 +12,11 @@ type SerialSessionOnData<TResolveType> = (
 
 export async function runSession<TResolveType>({
   command,
+  params,
   onData,
 }: {
-  command: string;
+  command: COMMANDS;
+  params?: readonly string[];
   onData: SerialSessionOnData<TResolveType>;
 }) {
   log.info("Opening serial port stream");
@@ -39,7 +42,7 @@ export async function runSession<TResolveType>({
       reject(err);
     });
 
-    const writePayload = `${command}\r`;
+    const writePayload = `${command}${params ? " " + params.join(" ") : ""}\r`;
     log.info(`Writing to serial port: ${JSON.stringify(writePayload)}`);
     serialPortStream.write(writePayload);
   }).finally(() => {

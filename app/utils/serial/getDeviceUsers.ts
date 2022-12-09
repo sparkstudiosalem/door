@@ -2,15 +2,12 @@ import { components } from "../../generated/schema/openapi";
 import parseAccxUser from "../parseAccxUser";
 import { runSession } from "./runSession";
 import createLogger from "../createLogger";
+import { SHOW_ALL_USERS, UNSET_TAG } from "./constants";
 
 const log = createLogger(__filename);
 
 type User = components["schemas"]["User"];
 
-// When a user is removed from the roster the slot is maintained, and the
-// tag is set to this default value.
-// https://en.wikipedia.org/wiki/4,294,967,295
-const UNSET_TAG = "4294967295"; // FFFF_FFFF
 const MAX_USERS = 200;
 
 export default async function getDeviceUsers() {
@@ -18,7 +15,7 @@ export default async function getDeviceUsers() {
   let ignoredUserCount: number = 0;
 
   return runSession({
-    command: "a",
+    command: SHOW_ALL_USERS,
     onData: (onComplete: (users: readonly User[]) => void, data: string) => {
       const nextUser = parseAccxUser(data);
 
