@@ -14,7 +14,7 @@ const UNSET_TAG = "4294967295"; // FFFF_FFFF
 const MAX_USERS = 200;
 
 export default async function getDeviceUsers() {
-  let users: readonly User[] | undefined;
+  let users: readonly User[] = [];
   let ignoredUserCount: number = 0;
 
   return runSession({
@@ -27,14 +27,23 @@ export default async function getDeviceUsers() {
           `Ignoring user id: ${nextUser.id} with default tag value 0xFFFF_FFFF ${nextUser.tag}`
         );
         ignoredUserCount += 1;
-        return;
       }
 
       if (nextUser) {
-        users = users ? [...users, nextUser] : [nextUser];
+        users = [...users, nextUser];
       }
 
-      if (users?.length && users.length + ignoredUserCount === MAX_USERS) {
+      const usersSum = users.length + ignoredUserCount;
+
+      log.info(
+        JSON.stringify({
+          nextUser,
+          users: users.length,
+          ignoredUserCount,
+        })
+      );
+
+      if (usersSum === MAX_USERS) {
         onComplete(users);
       }
     },
