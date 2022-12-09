@@ -5,6 +5,9 @@
 
 
 export interface paths {
+  "/status": {
+    get: operations["statusGet"];
+  };
   "/time": {
     get: operations["timeGet"];
   };
@@ -21,11 +24,27 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    readonly Alarm: {
+      /** @enum {string} */
+      readonly armedState: "armed" | "chimeOnly" | "disarmed";
+      readonly id: string;
+      /** @enum {string} */
+      readonly sirenState: "armed" | "delayed" | "disarmed";
+    };
     /**
      * Format: date-time 
      * @example 2020-01-01T00:00:00.000Z
      */
     readonly DateTime: string;
+    readonly DeviceStatus: {
+      readonly alarms: readonly (components["schemas"]["Alarm"])[];
+      readonly doors: readonly (components["schemas"]["Door"])[];
+    };
+    readonly Door: {
+      readonly id: string;
+      readonly isLocked: boolean;
+      readonly isOpen: boolean;
+    };
     readonly ErrorResponse: string;
     readonly User: {
       readonly id: components["schemas"]["UserId"];
@@ -47,6 +66,16 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  statusGet: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": components["schemas"]["DeviceStatus"];
+        };
+      };
+    };
+  };
   timeGet: {
     responses: {
       /** @description OK */

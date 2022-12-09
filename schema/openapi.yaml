@@ -6,6 +6,17 @@ info:
   version: "1.0"
   contact: {}
 paths:
+  /status:
+    get:
+      operationId: statusGet
+      x-eov-operation-handler: statusGet
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DeviceStatus'
   /time:
     get:
       operationId: timeGet
@@ -73,10 +84,58 @@ paths:
                   $ref: "#/components/schemas/User"
 components:
   schemas:
+    Alarm:
+      type: object
+      properties:
+        id:
+          type: string
+        armedState:
+          type: string
+          enum:
+            - armed
+            - chimeOnly
+            - disarmed
+        sirenState:
+          type: string
+          enum:
+            - armed
+            - delayed
+            - disarmed
+      required:
+        - armedState
+        - id
+        - sirenState
     DateTime:
       type: string
       format: date-time
       example: "2020-01-01T00:00:00.000Z"
+    DeviceStatus:
+      type: object
+      properties:
+        alarms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alarm'
+        doors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Door'
+      required:
+        - alarms
+        - doors
+    Door:
+      type: object
+      properties:
+        id:
+          type: string
+        isLocked:
+          type: boolean
+        isOpen:
+          type: boolean
+      required:
+        - id
+        - isLocked
+        - isOpen
     ErrorResponse:
       type: string
     User:
