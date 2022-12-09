@@ -3,26 +3,34 @@ export default function parseAccxDate(accxDate: string): Date {
   const parts = accxDate.split(/\s+/);
   if (parts.length !== 3) {
     throw new Error(
-      `Unrecognized ACCX date format ${accxDate}, overall format`
+      `Unrecognized ACCX date format ${JSON.stringify(
+        accxDate
+      )}; overall format`
     );
   }
 
   const [time, date, _dayOfWeek] = parts;
   if (!time || !date) {
-    throw new Error(`Unrecognized ACCX date format ${accxDate}, time or date`);
+    throw new Error(
+      `Unrecognized ACCX date format ${JSON.stringify(accxDate)}; time or date`
+    );
   }
 
   const timeParts = time.split(":");
   if (timeParts.length !== 3) {
     throw new Error(
-      `Unrecognized ACCX date format ${accxDate}, hour:minute:second part A`
+      `Unrecognized ACCX date format ${JSON.stringify(
+        accxDate
+      )}; hour:minute:second part A`
     );
   }
 
   const [hoursString, minutesString, secondsString] = timeParts;
   if (!hoursString || !minutesString || !secondsString) {
     throw new Error(
-      `Unrecognized ACCX date format ${accxDate}, hour:minute:second part B`
+      `Unrecognized ACCX date format ${JSON.stringify(
+        accxDate
+      )}; hour:minute:second part B`
     );
   }
 
@@ -34,14 +42,18 @@ export default function parseAccxDate(accxDate: string): Date {
   const dateParts = date.split("/");
   if (dateParts.length !== 3) {
     throw new Error(
-      `Unrecognized ACCX date format ${accxDate}, day/month/year part A`
+      `Unrecognized ACCX date format ${JSON.stringify(
+        accxDate
+      )}; day/month/year part A`
     );
   }
 
   const [yearString, monthString, dayString] = dateParts;
   if (!yearString || !monthString || !dayString) {
     throw new Error(
-      `Unrecognized ACCX date format ${accxDate}, day/month/year part B`
+      `Unrecognized ACCX date format ${JSON.stringify(
+        accxDate
+      )}; day/month/year part B`
     );
   }
 
