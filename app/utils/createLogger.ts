@@ -1,19 +1,40 @@
-export default function createLogger(categoryName: string) {
+const isTestEnvironment = process.env["NODE_ENV"] === "test";
+
+interface LoggerInterface {
+  debug: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+  info: (...args: any[]) => void;
+  log: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+}
+
+const mockImplementation = {
+  debug: (..._args: any[]) => undefined,
+  error: (..._args: any[]) => undefined,
+  info: (..._args: any[]) => undefined,
+  log: (..._args: any[]) => undefined,
+  warn: (..._args: any[]) => undefined,
+};
+
+export default function createLogger(
+  categoryName: string,
+  impl: LoggerInterface = isTestEnvironment ? mockImplementation : console
+) {
   return {
     debug: (...args: any[]) => {
-      return console.debug(`[${categoryName}]`, ...args);
+      return impl.debug(`[${categoryName}]`, ...args);
     },
     error: (...args: any[]) => {
-      return console.error(`[${categoryName}]`, ...args);
+      return impl.error(`[${categoryName}]`, ...args);
     },
     info: (...args: any[]) => {
-      return console.info(`[${categoryName}]`, ...args);
+      return impl.info(`[${categoryName}]`, ...args);
     },
     log: (...args: any[]) => {
-      return console.log(`[${categoryName}]`, ...args);
+      return impl.log(`[${categoryName}]`, ...args);
     },
     warn: (...args: any[]) => {
-      return console.warn(`[${categoryName}]`, ...args);
+      return impl.warn(`[${categoryName}]`, ...args);
     },
   };
 }
