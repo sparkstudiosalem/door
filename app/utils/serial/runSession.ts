@@ -16,6 +16,8 @@ export async function runSession<TResolveType>({
   command: string;
   onData: SerialSessionOnData<TResolveType>;
 }) {
+  log.info("Opening serial port stream");
+
   const serialPortStream = new SerialPort({
     path: "/dev/ttyAMA0",
     baudRate: 9600,
@@ -32,13 +34,16 @@ export async function runSession<TResolveType>({
 
     serialPortStream.on("error", (err) => {
       if (err) {
-        console.log(`Encountered an error event from serialport ${err}`);
+        log.error(`Encountered an error event from serialport ${err}`);
       }
       reject(err);
     });
 
-    serialPortStream.write(`${command}\r`);
+    const writePayload = `${command}\r`;
+    log.info(`Writing to serial port: ${JSON.stringify(writePayload)}`);
+    serialPortStream.write(writePayload);
   }).finally(() => {
+    log.info("Closing serial port stream");
     serialPortStream.close();
   });
 }
