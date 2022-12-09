@@ -17,9 +17,39 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/DateTime"
+  /users:
+    get:
+      operationId: usersGet
+      x-eov-operation-handler: usersGet
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
 components:
   schemas:
     DateTime:
       type: string
       format: date-time
       example: "2020-01-01T00:00:00.000Z"
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        userMask:
+          $ref: '#/components/schemas/UserMask'
+        tag:
+          type: string
+      required:
+        - id
+        - userMask
+        - tag
+    UserMask:
+      type: integer
+      minimum: 0
+      maximum: 255

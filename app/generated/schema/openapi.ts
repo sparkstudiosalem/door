@@ -3,9 +3,13 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/time": {
     get: operations["timeGet"];
+  };
+  "/users": {
+    get: operations["usersGet"];
   };
 }
 
@@ -14,10 +18,16 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
-     * Format: date-time
+     * Format: date-time 
      * @example 2020-01-01T00:00:00.000Z
      */
     readonly DateTime: string;
+    readonly User: {
+      readonly id: string;
+      readonly tag: string;
+      readonly userMask: components["schemas"]["UserMask"];
+    };
+    readonly UserMask: number;
   };
   responses: never;
   parameters: never;
@@ -29,12 +39,23 @@ export interface components {
 export type external = Record<string, never>;
 
 export interface operations {
+
   timeGet: {
     responses: {
       /** @description OK */
       200: {
         content: {
           readonly "application/json": components["schemas"]["DateTime"];
+        };
+      };
+    };
+  };
+  usersGet: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": readonly (components["schemas"]["User"])[];
         };
       };
     };

@@ -1,11 +1,13 @@
 import { SerialPort } from "serialport";
 import { ReadlineParser } from "@serialport/parser-readline";
-import parseAccxDate from "./utils/parseAccxDate";
 
-async function runSession<TResolveType extends Promise<unknown>>(
-  command: string,
-  onData: (data: string) => TResolveType
-) {
+export async function runSession<TResolveType>({
+  command,
+  onData,
+}: {
+  command: string;
+  onData: (onComplete: (result: TResolveType) => void, data: string) => void;
+}) {
   const serialPortStream = new SerialPort({
     path: "/dev/ttyAMA0",
     baudRate: 9600,
@@ -15,10 +17,7 @@ async function runSession<TResolveType extends Promise<unknown>>(
     const parser = new ReadlineParser();
     serialPortStream.pipe(parser);
 
-    parser.on("data", async (data) => {
-      const result = await onData(data);
-      resolve(result);
-    });
+    parser.on("data", onData.bind(null, resolve));
 
     serialPortStream.on("error", (err) => {
       if (err) {
@@ -31,14 +30,4 @@ async function runSession<TResolveType extends Promise<unknown>>(
   }).finally(() => {
     serialPortStream.close();
   });
-}
-
-export default function createSerialPortStream() {
-  return {
-    getDeviceTime: () => {
-      return runSession("d", async (accxDate: string) => {
-        return parseAccxDate(accxDate);
-      });
-    },
-  };
 }
