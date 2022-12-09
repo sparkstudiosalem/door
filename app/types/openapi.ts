@@ -9,9 +9,6 @@ type ForbiddenStatusCode = 403;
 type NotFoundStatusCode = 404;
 type GoneStatusCode = 410;
 type TooManyRequestsStatusCode = 429;
-type PlexEmailFeedNotFoundStatusCode = 470;
-type PlexEmailMissingParamStatusCode = 471;
-type PlexEmailUserNotFoundStatusCode = 472;
 type InternalServerStatusCode = 500;
 type ResponseStatusCode =
   | BadRequestStatusCode
@@ -21,9 +18,6 @@ type ResponseStatusCode =
   | InternalServerStatusCode
   | NoContentStatusCode
   | NotFoundStatusCode
-  | PlexEmailFeedNotFoundStatusCode
-  | PlexEmailMissingParamStatusCode
-  | PlexEmailUserNotFoundStatusCode
   | SuccessStatusCode
   | TooManyRequestsStatusCode
   | UnauthorizedStatusCode;
