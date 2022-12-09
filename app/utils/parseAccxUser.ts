@@ -5,7 +5,7 @@ export default function parseAccxUser(
 ): components["schemas"]["User"] | undefined {
   const userParts = accxUserString.split(/\s+/);
 
-  if (userParts.length !== 4) {
+  if (userParts.length < 3) {
     // throw new Error(
     //   `Unrecognized ACCX user format ${JSON.stringify(
     //     accxUserString
@@ -24,7 +24,7 @@ export default function parseAccxUser(
     return undefined;
   }
 
-  if (id === "UserNum:") {
+  if (id.includes(":")) {
     return undefined;
   }
 

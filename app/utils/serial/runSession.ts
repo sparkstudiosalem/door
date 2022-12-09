@@ -4,12 +4,17 @@ import createLogger from "../createLogger";
 
 const log = createLogger(__filename);
 
+type SerialSessionOnData<TResolveType> = (
+  onComplete: (result: TResolveType) => void,
+  data: string
+) => void;
+
 export async function runSession<TResolveType>({
   command,
   onData,
 }: {
   command: string;
-  onData: (onComplete: (result: TResolveType) => void, data: string) => void;
+  onData: SerialSessionOnData<TResolveType>;
 }) {
   const serialPortStream = new SerialPort({
     path: "/dev/ttyAMA0",
@@ -17,7 +22,7 @@ export async function runSession<TResolveType>({
   });
 
   return new Promise<TResolveType>((resolve, reject) => {
-    const parser = new ReadlineParser({ delimiter: "\r" });
+    const parser = new ReadlineParser({ delimiter: "\r\n" });
     serialPortStream.pipe(parser);
 
     parser.on("data", (data: string) => {
