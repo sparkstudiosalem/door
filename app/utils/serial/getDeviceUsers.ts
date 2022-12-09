@@ -27,9 +27,7 @@ export default async function getDeviceUsers() {
           `Ignoring user id: ${nextUser.id} with default tag value 0xFFFF_FFFF ${nextUser.tag}`
         );
         ignoredUserCount += 1;
-      }
-
-      if (nextUser) {
+      } else if (nextUser) {
         users = [...users, nextUser];
       }
 
