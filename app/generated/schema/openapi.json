@@ -11,6 +11,9 @@
       "get": {
         "operationId": "statusGet",
         "x-eov-operation-handler": "statusGet",
+        "tags": [
+          "Device"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -29,6 +32,9 @@
       "get": {
         "operationId": "timeGet",
         "x-eov-operation-handler": "timeGet",
+        "tags": [
+          "Device"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -47,6 +53,9 @@
       "delete": {
         "operationId": "userDelete",
         "x-eov-operation-handler": "userDelete",
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "204": {
             "description": "No Content"
@@ -76,6 +85,9 @@
       "get": {
         "operationId": "userGet",
         "x-eov-operation-handler": "userGet",
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "OK",

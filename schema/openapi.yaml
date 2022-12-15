@@ -10,6 +10,8 @@ paths:
     get:
       operationId: statusGet
       x-eov-operation-handler: statusGet
+      tags:
+        - Device
       responses:
         200:
           description: OK
@@ -21,6 +23,8 @@ paths:
     get:
       operationId: timeGet
       x-eov-operation-handler: timeGet
+      tags:
+        - Device
       responses:
         200:
           description: OK
@@ -32,6 +36,8 @@ paths:
     delete:
       operationId: userDelete
       x-eov-operation-handler: userDelete
+      tags:
+        - Users
       responses:
         204:
           description: No Content
@@ -50,6 +56,8 @@ paths:
     get:
       operationId: userGet
       x-eov-operation-handler: userGet
+      tags:
+        - Users
       responses:
         200:
           description: OK
