@@ -9,19 +9,42 @@ import {
 
 const log = createLogger(__filename);
 
-log.info("Opening serial port stream");
 type SerialSessionOnData<TResolveType> = (
   onComplete: (result: TResolveType) => void,
   data: string
 ) => void;
 
-const serialPortStream = new SerialPort({
-  path: "/dev/ttyAMA0",
-  baudRate: 9600,
-});
+let serialPortStream: SerialPort;
+export default async function initialize() {
+  log.info("Opening serial port stream");
+  serialPortStream = new SerialPort({
+    path: "/dev/ttyAMA0",
+    baudRate: 9600,
+  });
 
-const readlineParser = new ReadlineParser({ delimiter: "\r\n" });
-serialPortStream.pipe(readlineParser);
+  const readlineParser = new ReadlineParser({ delimiter: "\r\n" });
+  serialPortStream.pipe(readlineParser);
+
+  // The primary data listener is responsible for splitting the data stream.
+  // Recognized events from the ACCX such as card scans are forwarded to a
+  // dedicated handler.
+  // Other data events are forwarded to command-specific handlers.
+  readlineParser.on("data", (data: string) => {
+    log.debug(`Received data from serial port: ${JSON.stringify(data)}`);
+
+    // 0:0:0  1/1/0 SUN User 6609 presented tag at reader 2
+    // 0:0:0  1/1/0 SUN User not found
+    // 0:0:0  1/1/0 SUN User  denied access at reader 2
+    const isBadgeEvent = !!data.match(
+      /^\d+:\d+\d+\s+\d+\/\d+\/\d+ \w{3} User /
+    );
+    if (isBadgeEvent) {
+      handleBadgeEvent(data);
+    } else {
+      handleNonBadgeEvent(data);
+    }
+  });
+}
 
 function handleBadgeEvent(data: string) {
   log.info(`Badge data received: ${JSON.stringify(data)}`);
@@ -50,22 +73,6 @@ function handleNonBadgeEvent(data: string) {
 
   onData(onComplete, data);
 }
-
-// The primary data listener is responsible for splitting the data stream.
-// Recognized events from the ACCX such as card scans are forwarded to a
-// dedicated handler.
-// Other data events are forwarded to command-specific handlers.
-readlineParser.on("data", (data: string) => {
-  // 0:0:0  1/1/0 SUN User 6609 presented tag at reader 2
-  // 0:0:0  1/1/0 SUN User not found
-  // 0:0:0  1/1/0 SUN User  denied access at reader 2
-  const isBadgeEvent = !!data.match(/^\d+:\d+\d+\s+\d+\/\d+\/\d+ \w{3} User /);
-  if (isBadgeEvent) {
-    handleBadgeEvent(data);
-  } else {
-    handleNonBadgeEvent(data);
-  }
-});
 
 function enqueue<TResolveType>({
   command,

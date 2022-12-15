@@ -1,5 +1,5 @@
 import { components } from "../../generated/schema/openapi";
-import { runSession } from "./runSession";
+import { runSession } from "./serial";
 import { SHOW_DEVICE_STATUS } from "./constants";
 
 // "Alarm armed state (1=armed):4",
@@ -28,28 +28,36 @@ function createPartialAlarm(index: number): PartialMutable<Alarm> {
   };
 }
 
-function createPartialDoor(doorId: string): PartialMutable<Door> {
+function createPartialDoor(index: number): PartialMutable<Door> {
   return {
-    id: doorId,
+    id: index.toString(),
   };
 }
 
-export default async function getDeviceStatus() {
-  const alarms: Alarm[] = [];
-  const doors: Door[] = [];
-  let partialAlarm: ReturnType<typeof createPartialAlarm> | undefined;
-  let partialDoor: ReturnType<typeof createPartialDoor> | undefined;
+export function parseDeviceStatus(lines: readonly string[]) {
+  const [alarmLines, doorLines] = lines.reduce<[string[], string[]]>(
+    (acc, line) => {
+      const destination = line.startsWith("Alarm ") ? acc[0] : acc[1];
+      destination.push(line);
+      return acc;
+    },
+    [[], []]
+  );
 
-  return runSession({
-    command: SHOW_DEVICE_STATUS,
-    onData: (
-      onComplete: (deviceStatus: DeviceStatus) => void,
-      data: string
-    ) => {
-      // Accumulate Alarm state
-      if (data.startsWith("Alarm armed state")) {
-        partialAlarm = createPartialAlarm(alarms.length);
-        const armedState = data.split(":")[1];
+  const alarms = alarmLines.reduce<PartialMutable<Alarm>[]>(
+    (acc, line, index) => {
+      // Alarms are not given explicit indices; as the ACCX has only one alarm
+      // it receives an implicit 0 index.
+      // The status output includes two lines for the alarm; one indicating
+      // armed state, and one indicating the siren state, so we use the
+      // offset into the alarm lines, divided by two, in order to identify the
+      // alarm.
+      // TODO: FIRMWARE: Give explicit indices to alarms
+      const alarmIndex = Math.floor(index / 2);
+      const partialAlarm = acc[alarmIndex] || createPartialAlarm(alarmIndex);
+
+      if (line.startsWith("Alarm armed state")) {
+        const armedState = line.split(":")[1];
 
         if (armedState === "0") {
           partialAlarm.armedState = "disarmed";
@@ -58,66 +66,102 @@ export default async function getDeviceStatus() {
         } else if (armedState === "4") {
           partialAlarm.armedState = "chimeOnly";
         }
-      } else if (data.startsWith("Alarm siren state") && partialAlarm) {
-        const sirenState = data.split(":")[1];
+      } else if (line.startsWith("Alarm siren state") && partialAlarm) {
+        const sirenState = line.split(":")[1];
 
         if (sirenState === "0") {
           partialAlarm.sirenState = "disarmed";
         } else if (sirenState === "1") {
-          partialAlarm.sirenState = "armed";
+          partialAlarm.sirenState = "activated";
         } else if (sirenState === "2") {
           partialAlarm.sirenState = "delayed";
         }
-
-        if (partialAlarm.armedState && partialAlarm.sirenState) {
-          alarms.push(partialAlarm as Alarm);
-          partialAlarm = undefined;
-        }
-      } else if (data.includes("door open state")) {
-        let doorId: string | undefined = undefined;
-        if (data.startsWith("Front")) {
-          doorId = "0";
-        } else if (data.startsWith("Roll up")) {
-          doorId = "1";
-        }
-
-        if (!doorId) {
-          return;
-        }
-
-        partialDoor = createPartialDoor(doorId);
-
-        const doorOpenState = data.split(":")[1];
-        partialDoor.isOpen = doorOpenState === "0";
-      } else if (data.includes("unlocked state") && partialDoor) {
-        let doorId: string | undefined = undefined;
-        if (data.startsWith("Door 1")) {
-          doorId = "0";
-        } else if (data.startsWith("Door 2")) {
-          doorId = "1";
-        }
-
-        if (!doorId) {
-          return;
-        }
-
-        const doorLockedState = data.split(":")[1];
-        partialDoor.isLocked = doorLockedState === "1";
-
-        if (
-          partialDoor.isLocked !== undefined &&
-          partialDoor.isOpen !== undefined
-        ) {
-          doors.push(partialDoor as Door);
-          partialDoor = undefined;
-        }
       }
 
-      if (doors.length === 2) {
-        onComplete({
-          alarms,
-          doors,
-        });
+      acc[alarmIndex] = partialAlarm;
+
+      return acc;
+    },
+    []
+  );
+
+  const doors = doorLines.reduce<PartialMutable<Door>[]>((acc, line) => {
+    // let doorIndex: number | undefined = undefined;
+    // Doors are referred-to inconsistently
+    // TODO: FIRMWARE: Give explicit, consistent indices to doors
+    if (line.includes("door open state")) {
+      let doorIndex: number | undefined = undefined;
+      if (line.startsWith("Front")) {
+        doorIndex = 0;
+      } else if (line.startsWith("Roll up")) {
+        doorIndex = 1;
+      }
+
+      if (doorIndex === undefined) {
+        return acc;
+      }
+
+      const partialDoor = acc[doorIndex] || createPartialDoor(doorIndex);
+      const doorOpenState = line.split(":")[1];
+      partialDoor.isOpen = doorOpenState !== "0";
+      acc[doorIndex] = partialDoor;
+    } else if (line.includes("unlocked state")) {
+      let doorIndex: number | undefined = undefined;
+      if (line.startsWith("Door 1")) {
+        doorIndex = 0;
+      } else if (line.startsWith("Door 2")) {
+        doorIndex = 1;
+      }
+
+      if (doorIndex === undefined) {
+        return acc;
+      }
+
+      const partialDoor = acc[doorIndex] || createPartialDoor(doorIndex);
+      const doorLockedState = line.split(":")[1];
+      partialDoor.isLocked = doorLockedState === "1";
+      acc[doorIndex] = partialDoor;
+      return acc;
+    }
+
+    return acc;
+  }, []);
+
+  return {
+    alarms: alarms.filter(isCompleteAlarm),
+    doors: doors.filter(isCompleteDoor),
+  };
+}
+
+function isCompleteAlarm(
+  _partialAlarm: PartialMutable<Alarm>
+): _partialAlarm is Alarm {
+  return true;
+}
+
+function isCompleteDoor(
+  _partialDoor: PartialMutable<Door>
+): _partialDoor is Door {
+  return true;
+}
+
+function validateDeviceStatus({ alarms, doors }: DeviceStatus): boolean {
+  return alarms.length === 1 && doors.length === 2;
+}
+
+export default async function getDeviceStatus() {
+  const lines: string[] = [];
+
+  return runSession({
+    command: SHOW_DEVICE_STATUS,
+    onData: (
+      onComplete: (deviceStatus: DeviceStatus) => void,
+      data: string
+    ) => {
+      lines.push(data);
+      const deviceStatus = parseDeviceStatus(lines);
+      if (validateDeviceStatus(deviceStatus)) {
+        onComplete(deviceStatus);
       }
     },
   });

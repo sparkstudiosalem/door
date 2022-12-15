@@ -1,6 +1,6 @@
 import { components } from "../../generated/schema/openapi";
 import parseAccxUser from "../parseAccxUser";
-import { runSession } from "./runSession";
+import { runSession } from "./serial";
 import createLogger from "../createLogger";
 import { SHOW_USER, UNSET_TAG } from "./constants";
 

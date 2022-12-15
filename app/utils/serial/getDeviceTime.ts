@@ -1,6 +1,6 @@
 import parseAccxDate from "../parseAccxDate";
 import { SHOW_DATE } from "./constants";
-import { runSession } from "./runSession";
+import { runSession } from "./serial";
 
 export default async function getDeviceTime() {
   return runSession({

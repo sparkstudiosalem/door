@@ -1,5 +1,5 @@
 import parseAccxUser from "../parseAccxUser";
-import { runSession } from "./runSession";
+import { runSession } from "./serial";
 import { REMOVE_USER } from "./constants";
 
 export default async function removeDeviceUser(userId: string) {
