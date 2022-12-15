@@ -151,7 +151,7 @@
           "sirenState": {
             "type": "string",
             "enum": [
-              "armed",
+              "activated",
               "delayed",
               "disarmed"
             ]

@@ -146,7 +146,31 @@ function isCompleteDoor(
 }
 
 function validateDeviceStatus({ alarms, doors }: DeviceStatus): boolean {
-  return alarms.length === 1 && doors.length === 2;
+  if (alarms.length !== 1) {
+    return false;
+  }
+
+  if (
+    alarms.some((alarm) => {
+      return alarm.armedState === undefined || alarm.sirenState === undefined;
+    })
+  ) {
+    return false;
+  }
+
+  if (doors.length !== 2) {
+    return false;
+  }
+
+  if (
+    doors.some((door) => {
+      return door.isLocked === undefined || door.isOpen === undefined;
+    })
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 export default async function getDeviceStatus() {

@@ -3,6 +3,7 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/status": {
     get: operations["statusGet"];
@@ -31,13 +32,13 @@ export interface components {
       readonly sirenState: "activated" | "delayed" | "disarmed";
     };
     /**
-     * Format: date-time
+     * Format: date-time 
      * @example 2020-01-01T00:00:00.000Z
      */
     readonly DateTime: string;
     readonly DeviceStatus: {
-      readonly alarms: readonly components["schemas"]["Alarm"][];
-      readonly doors: readonly components["schemas"]["Door"][];
+      readonly alarms: readonly (components["schemas"]["Alarm"])[];
+      readonly doors: readonly (components["schemas"]["Door"])[];
     };
     readonly Door: {
       readonly id: string;
@@ -64,6 +65,7 @@ export interface components {
 export type external = Record<string, never>;
 
 export interface operations {
+
   statusGet: {
     responses: {
       /** @description OK */
@@ -127,7 +129,7 @@ export interface operations {
       /** @description OK */
       200: {
         content: {
-          readonly "application/json": readonly components["schemas"]["User"][];
+          readonly "application/json": readonly (components["schemas"]["User"])[];
         };
       };
     };
