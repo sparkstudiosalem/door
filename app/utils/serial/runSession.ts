@@ -1,52 +1,152 @@
 import { SerialPort } from "serialport";
 import { ReadlineParser } from "@serialport/parser-readline";
 import createLogger from "../createLogger";
-import { COMMANDS } from "./constants";
+import {
+  COMMANDS,
+  PRIVILEGED_MODE,
+  PRIVILEGED_MODE_PASSWORD,
+} from "./constants";
 
 const log = createLogger(__filename);
 
+log.info("Opening serial port stream");
 type SerialSessionOnData<TResolveType> = (
   onComplete: (result: TResolveType) => void,
   data: string
 ) => void;
 
-export async function runSession<TResolveType>({
+const serialPortStream = new SerialPort({
+  path: "/dev/ttyAMA0",
+  baudRate: 9600,
+});
+
+const readlineParser = new ReadlineParser({ delimiter: "\r\n" });
+serialPortStream.pipe(readlineParser);
+
+function handleBadgeEvent(data: string) {
+  log.info(`Badge data received: ${JSON.stringify(data)}`);
+}
+
+const handlers: {
+  command: string;
+  isPrivileged: boolean;
+  onComplete: (result: any) => void;
+  onData: SerialSessionOnData<any>;
+}[] = [];
+
+function handleNonBadgeEvent(data: string) {
+  const handler = handlers[0];
+
+  if (!handler) {
+    log.warn(
+      `Non-badge data received, and no handler is available ${JSON.stringify(
+        data
+      )}`
+    );
+    return;
+  }
+
+  const { onComplete, onData } = handler;
+
+  onData(onComplete, data);
+}
+
+// The primary data listener is responsible for splitting the data stream.
+// Recognized events from the ACCX such as card scans are forwarded to a
+// dedicated handler.
+// Other data events are forwarded to command-specific handlers.
+readlineParser.on("data", (data: string) => {
+  // 0:0:0  1/1/0 SUN User 6609 presented tag at reader 2
+  // 0:0:0  1/1/0 SUN User not found
+  // 0:0:0  1/1/0 SUN User  denied access at reader 2
+  const isBadgeEvent = !!data.match(/^\d+:\d+\d+\s+\d+\/\d+\/\d+ \w{3} User /);
+  if (isBadgeEvent) {
+    handleBadgeEvent(data);
+  } else {
+    handleNonBadgeEvent(data);
+  }
+});
+
+function enqueue<TResolveType>({
   command,
-  params,
+  isPrivileged,
+  onComplete,
   onData,
 }: {
-  command: COMMANDS;
-  params?: readonly string[];
+  command: string;
+  isPrivileged: boolean;
+  onComplete: (result: TResolveType) => void;
   onData: SerialSessionOnData<TResolveType>;
 }) {
-  log.info("Opening serial port stream");
+  handlers.push({ command, isPrivileged, onComplete, onData });
+  tick();
+}
 
-  const serialPortStream = new SerialPort({
-    path: "/dev/ttyAMA0",
-    baudRate: 9600,
-  });
+function tick() {
+  const handler = handlers[0];
+  if (handler && handlers.length === 1) {
+    const { command, isPrivileged } = handler;
+    if (isPrivileged) {
+      log.info(
+        `Enabling privileged mode for command ${JSON.stringify(command)}`
+      );
+      serialPortStream.write(
+        `${PRIVILEGED_MODE} ${PRIVILEGED_MODE_PASSWORD}\r`
+      );
+    }
+    log.info(`Writing to serial port: ${JSON.stringify(command)}`);
+    serialPortStream.write(command);
+  }
+}
 
+export async function runSession<TResolveType>({
+  command,
+  isPrivileged = false,
+  onData,
+  params,
+}: {
+  command: COMMANDS;
+  isPrivileged?: boolean;
+  onData: SerialSessionOnData<TResolveType>;
+  params?: readonly string[];
+}) {
   return new Promise<TResolveType>((resolve, reject) => {
-    const parser = new ReadlineParser({ delimiter: "\r\n" });
-    serialPortStream.pipe(parser);
+    // serialPortStream.on("error", (err) => {
+    //   if (err) {
+    //     log.error(`Encountered an error event from serialport ${err}`);
+    //   }
+    //   reject(err);
+    // });
 
-    parser.on("data", (data: string) => {
-      log.info(JSON.stringify({ data }));
-      onData(resolve, data);
-    });
-
-    serialPortStream.on("error", (err) => {
-      if (err) {
-        log.error(`Encountered an error event from serialport ${err}`);
+    function onComplete(result: TResolveType) {
+      const handler = handlers.shift();
+      if (!handler) {
+        log.error("Handler onComplete called, but handler was not available");
+        reject();
+        return;
       }
-      reject(err);
-    });
 
-    const writePayload = `${command}${params ? " " + params.join(" ") : ""}\r`;
-    log.info(`Writing to serial port: ${JSON.stringify(writePayload)}`);
-    serialPortStream.write(writePayload);
+      const { isPrivileged } = handler;
+      if (isPrivileged) {
+        log.info(
+          `Disabling privileged mode for command ${JSON.stringify(command)}`
+        );
+        serialPortStream.write(`${PRIVILEGED_MODE}\r`);
+      }
+
+      resolve(result);
+
+      global.setImmediate(tick);
+    }
+
+    enqueue({
+      command: `${command}${params ? " " + params.join(" ") : ""}\r`,
+      isPrivileged,
+      onComplete,
+      onData,
+    });
   }).finally(() => {
-    log.info("Closing serial port stream");
-    serialPortStream.close();
+    // log.info("Closing serial port stream");
+    // serialPortStream.close();
   });
 }

@@ -3,6 +3,7 @@ export const SHOW_ALL_USERS = "a" as const;
 export const SHOW_DEVICE_STATUS = "9" as const;
 export const SHOW_DATE = "d" as const;
 export const SHOW_USER = "s" as const;
+export const PRIVILEGED_MODE = "e" as const;
 
 export type COMMANDS =
   | typeof REMOVE_USER
@@ -19,3 +20,5 @@ export const UNSET_TAG = "4294967295"; // FFFF_FFFF
 export const MAX_USERS = 200;
 
 export const BAD_USER_NUMBER_MESSAGE = "Bad user number!";
+
+export const PRIVILEGED_MODE_PASSWORD = "1234";
