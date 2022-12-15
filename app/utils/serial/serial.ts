@@ -36,8 +36,9 @@ export default async function initialize() {
     // 0:0:0  1/1/0 SUN User not found
     // 0:0:0  1/1/0 SUN User  denied access at reader 2
     const isBadgeEvent = !!data.match(
-      /^\d+:\d+\d+\s+\d+\/\d+\/\d+ \w{3} User /
+      /^\d+:\d+:\d+\s+\d+\/\d+\/\d+\s+\w{3}\s+User\s+/
     );
+
     if (isBadgeEvent) {
       handleBadgeEvent(data);
     } else {
