@@ -9,10 +9,11 @@ import {
 
 const log = createLogger(__filename);
 
-type SerialSessionOnData<TResolveType> = (
-  onComplete: (result: TResolveType) => void,
-  data: string
-) => void;
+type SerialSessionOnEvent<TResolveType> = (event: {
+  data: string;
+  onComplete: (result: TResolveType) => void;
+  onError: () => void;
+}) => void;
 
 let serialPortStream: SerialPort;
 export default async function initialize() {
@@ -57,7 +58,8 @@ const handlers: {
   command: string;
   isPrivileged: boolean;
   onComplete: (result: any) => void;
-  onData: SerialSessionOnData<any>;
+  onError: () => void;
+  onEvent: SerialSessionOnEvent<any>;
 }[] = [];
 
 function handleNonBadgeEvent(data: string) {
@@ -72,23 +74,27 @@ function handleNonBadgeEvent(data: string) {
     return;
   }
 
-  const { onComplete, onData } = handler;
-
-  onData(onComplete, data);
+  handler.onEvent({
+    data,
+    onComplete: handler.onComplete,
+    onError: handler.onError,
+  });
 }
 
 function enqueue<TResolveType>({
   command,
   isPrivileged,
   onComplete,
-  onData,
+  onError,
+  onEvent,
 }: {
   command: string;
   isPrivileged: boolean;
   onComplete: (result: TResolveType) => void;
-  onData: SerialSessionOnData<TResolveType>;
+  onError: () => void;
+  onEvent: SerialSessionOnEvent<TResolveType>;
 }) {
-  handlers.push({ command, isPrivileged, onComplete, onData });
+  handlers.push({ command, isPrivileged, onComplete, onError, onEvent });
   tick();
 }
 
@@ -112,22 +118,15 @@ function tick() {
 export async function runSession<TResolveType>({
   command,
   isPrivileged = false,
-  onData,
+  onEvent,
   params,
 }: {
   command: COMMANDS;
   isPrivileged?: boolean;
-  onData: SerialSessionOnData<TResolveType>;
-  params?: readonly string[];
+  onEvent: SerialSessionOnEvent<TResolveType>;
+  params?: readonly (string | number)[];
 }) {
   return new Promise<TResolveType>((resolve, reject) => {
-    // serialPortStream.on("error", (err) => {
-    //   if (err) {
-    //     log.error(`Encountered an error event from serialport ${err}`);
-    //   }
-    //   reject(err);
-    // });
-
     function onComplete(result: TResolveType) {
       const handler = handlers.shift();
       if (!handler) {
@@ -149,14 +148,16 @@ export async function runSession<TResolveType>({
       global.setImmediate(tick);
     }
 
+    function onError() {
+      reject();
+    }
+
     enqueue({
       command: `${command}${params ? " " + params.join(" ") : ""}\r`,
       isPrivileged,
       onComplete,
-      onData,
+      onError,
+      onEvent,
     });
-  }).finally(() => {
-    // log.info("Closing serial port stream");
-    // serialPortStream.close();
   });
 }

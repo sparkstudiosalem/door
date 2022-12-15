@@ -1,6 +1,6 @@
 import { components } from "../../generated/schema/openapi";
 import { runSession } from "./serial";
-import { SHOW_DEVICE_STATUS } from "./constants";
+import { DEVICE_STATUS_SHOW } from "./constants";
 
 // "Alarm armed state (1=armed):4",
 // "Alarm siren state (1=activated):0",
@@ -177,15 +177,22 @@ export default async function getDeviceStatus() {
   const lines: string[] = [];
 
   return runSession({
-    command: SHOW_DEVICE_STATUS,
-    onData: (
-      onComplete: (deviceStatus: DeviceStatus) => void,
-      data: string
-    ) => {
+    command: DEVICE_STATUS_SHOW,
+    onEvent: ({
+      data,
+      onError,
+      onComplete,
+    }: {
+      data: string;
+      onError: () => void;
+      onComplete: (deviceStatus: DeviceStatus) => void;
+    }) => {
       lines.push(data);
       const deviceStatus = parseDeviceStatus(lines);
       if (validateDeviceStatus(deviceStatus)) {
         onComplete(deviceStatus);
+      } else {
+        onError();
       }
     },
   });

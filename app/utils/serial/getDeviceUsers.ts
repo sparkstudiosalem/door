@@ -1,30 +1,32 @@
-import { components } from "../../generated/schema/openapi";
 import parseAccxUser from "../parseAccxUser";
 import { runSession } from "./serial";
 import createLogger from "../createLogger";
-import { MAX_USERS, SHOW_ALL_USERS, UNSET_TAG } from "./constants";
+import { MAX_USERS, User, USERS_SHOW } from "./constants";
+import validateUserBadge from "../validateUserBadge";
+import { isUser } from "../isUser";
 
 const log = createLogger(__filename);
-
-type User = components["schemas"]["User"];
 
 export default async function getDeviceUsers() {
   let users: readonly User[] = [];
   let ignoredUserCount: number = 0;
 
   return runSession({
-    command: SHOW_ALL_USERS,
+    command: USERS_SHOW,
     isPrivileged: true,
-    onData: (onComplete: (users: readonly User[]) => void, data: string) => {
+    onEvent: ({
+      data,
+      onComplete,
+    }: {
+      data: string;
+      onComplete: (users: readonly User[]) => void;
+    }) => {
       const nextUser = parseAccxUser(data);
 
-      if (nextUser?.tag === UNSET_TAG) {
-        log.info(
-          `Ignoring user id: ${nextUser.id} with default tag value 0xFFFF_FFFF ${nextUser.tag}`
-        );
-        ignoredUserCount += 1;
-      } else if (nextUser) {
+      if (isUser(nextUser) && validateUserBadge(nextUser)) {
         users = [...users, nextUser];
+      } else {
+        ignoredUserCount += 1;
       }
 
       const usersSum = users.length + ignoredUserCount;

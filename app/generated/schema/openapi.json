@@ -56,6 +56,16 @@
         "tags": [
           "Users"
         ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserId"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "No Content"
@@ -70,7 +80,14 @@
               }
             }
           }
-        },
+        }
+      },
+      "get": {
+        "operationId": "userGet",
+        "x-eov-operation-handler": "userGet",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -80,13 +97,6 @@
               "$ref": "#/components/schemas/UserId"
             }
           }
-        ]
-      },
-      "get": {
-        "operationId": "userGet",
-        "x-eov-operation-handler": "userGet",
-        "tags": [
-          "Users"
         ],
         "responses": {
           "200": {
@@ -109,7 +119,15 @@
               }
             }
           }
-        },
+        }
+      },
+      "put": {
+        "operationId": "userPut",
+        "x-eov-operation-handler": "userPut",
+        "tags": [
+          "Users"
+        ],
+        "description": "Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request.",
         "parameters": [
           {
             "name": "userId",
@@ -119,7 +137,65 @@
               "$ref": "#/components/schemas/UserId"
             }
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "badge": {
+                    "$ref": "#/components/schemas/Badge"
+                  },
+                  "currentBadge": {
+                    "$ref": "#/components/schemas/Badge"
+                  },
+                  "userMask": {
+                    "$ref": "#/components/schemas/UserMask"
+                  }
+                },
+                "required": [
+                  "badge",
+                  "currentBadge",
+                  "userMask"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users": {
@@ -223,23 +299,26 @@
       "ErrorResponse": {
         "type": "string"
       },
+      "Badge": {
+        "type": "string"
+      },
       "User": {
         "type": "object",
         "properties": {
           "id": {
             "$ref": "#/components/schemas/UserId"
           },
+          "badge": {
+            "$ref": "#/components/schemas/Badge"
+          },
           "userMask": {
             "$ref": "#/components/schemas/UserMask"
-          },
-          "tag": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "userMask",
-          "tag"
+          "badge"
         ]
       },
       "UserId": {

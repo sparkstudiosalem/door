@@ -3,7 +3,7 @@ import { OpenAPIHandler } from "../types/openapi";
 import getDeviceUsers from "../utils/serial/getDeviceUsers";
 
 export default (async function usersGet(_req, res) {
-  const deviceUsers = await getDeviceUsers();
+  const users = await getDeviceUsers();
 
-  res.json(deviceUsers);
+  res.json(users);
 } as OpenAPIHandler<operations, "usersGet">);

@@ -1,28 +1,28 @@
-import { components } from "../../generated/schema/openapi";
 import parseAccxUser from "../parseAccxUser";
 import { runSession } from "./serial";
-import createLogger from "../createLogger";
-import { SHOW_USER, UNSET_TAG } from "./constants";
-
-const log = createLogger(__filename);
-
-type User = components["schemas"]["User"];
+import { User, USER_SHOW } from "./constants";
+import validateUserBadge from "../validateUserBadge";
 
 export default async function getDeviceUser(userId: string) {
   return runSession({
-    command: SHOW_USER,
+    command: USER_SHOW,
     isPrivileged: true,
     params: [userId],
-    onData: (onComplete: (user: User | undefined) => void, data: string) => {
+    onEvent: ({
+      data,
+      onError,
+      onComplete,
+    }: {
+      data: string;
+      onError: () => void;
+      onComplete: (user: User | undefined) => void;
+    }) => {
       const nextUser = parseAccxUser(data);
 
-      if (nextUser?.tag === UNSET_TAG) {
-        log.info(
-          `Ignoring user id: ${nextUser.id} with default tag value 0xFFFF_FFFF ${nextUser.tag}`
-        );
-        onComplete(undefined);
-      } else if (nextUser) {
+      if (validateUserBadge(nextUser)) {
         onComplete(nextUser);
+      } else {
+        onError();
       }
     },
   });

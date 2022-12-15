@@ -10,7 +10,7 @@ describe("parseAccxUser", () => {
       {
         id: "186",
         userMask: 255,
-        tag: "102",
+        badge: "102",
       },
     ],
     [
@@ -18,7 +18,7 @@ describe("parseAccxUser", () => {
       {
         id: "197",
         userMask: 255,
-        tag: "4294967295",
+        badge: "4294967295",
       },
     ],
     [
@@ -26,7 +26,7 @@ describe("parseAccxUser", () => {
       {
         id: "189",
         userMask: 255,
-        tag: "88",
+        badge: "88",
       },
     ],
     ["UserNum: Usermask: TagNum:", undefined],

@@ -13,6 +13,8 @@ export interface paths {
   };
   "/user/{userId}": {
     get: operations["userGet"];
+    /** @description Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request. */
+    put: operations["userPut"];
     delete: operations["userDelete"];
   };
   "/users": {
@@ -31,6 +33,7 @@ export interface components {
       /** @enum {string} */
       readonly sirenState: "activated" | "delayed" | "disarmed";
     };
+    readonly Badge: string;
     /**
      * Format: date-time 
      * @example 2020-01-01T00:00:00.000Z
@@ -47,8 +50,8 @@ export interface components {
     };
     readonly ErrorResponse: string;
     readonly User: {
+      readonly badge: components["schemas"]["Badge"];
       readonly id: components["schemas"]["UserId"];
-      readonly tag: string;
       readonly userMask: components["schemas"]["UserMask"];
     };
     readonly UserId: string;
@@ -97,6 +100,43 @@ export interface operations {
       200: {
         content: {
           readonly "application/json": components["schemas"]["User"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  userPut: {
+    /** @description Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request. */
+    parameters: {
+      readonly path: {
+        userId: components["schemas"]["UserId"];
+      };
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly "application/json": {
+          readonly badge: components["schemas"]["Badge"];
+          readonly currentBadge: components["schemas"]["Badge"];
+          readonly userMask: components["schemas"]["UserMask"];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": components["schemas"]["User"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
         };
       };
       /** @description Not Found */

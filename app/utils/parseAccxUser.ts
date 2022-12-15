@@ -23,12 +23,12 @@ export default function parseAccxUser(
     return undefined;
   }
 
-  const [id, userMask, tag] = userParts;
-  if (!id || !userMask || !tag) {
+  const [id, userMask, badge] = userParts;
+  if (!id || !userMask || !badge) {
     log.error(
       `Unrecognized ACCX user format ${JSON.stringify(
         accxUserString
-      )}; missing id, userMask, or tag`
+      )}; missing id, userMask, or badge`
     );
 
     return undefined;
@@ -42,6 +42,6 @@ export default function parseAccxUser(
   return {
     id,
     userMask: parseInt(userMask, 10),
-    tag,
+    badge,
   };
 }

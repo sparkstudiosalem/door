@@ -1,13 +1,19 @@
 import parseAccxUser from "../parseAccxUser";
 import { runSession } from "./serial";
-import { REMOVE_USER } from "./constants";
+import { USER_REMOVE } from "./constants";
 
 export default async function removeDeviceUser(userId: string) {
   return runSession({
-    command: REMOVE_USER,
+    command: USER_REMOVE,
     isPrivileged: true,
     params: [userId],
-    onData: (onComplete: (result: Boolean) => void, data: string) => {
+    onEvent: ({
+      data,
+      onComplete,
+    }: {
+      data: string;
+      onComplete: (result: Boolean) => void;
+    }) => {
       const nextUser = parseAccxUser(data);
 
       onComplete(!!nextUser);
