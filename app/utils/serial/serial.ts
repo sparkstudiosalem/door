@@ -38,10 +38,12 @@ export default async function initialize() {
     const isBadgeEvent = !!data.match(
       /^\d+:\d+:\d+\s+\d+\/\d+\/\d+\s+\w{3}\s+User\s+/
     );
+    // 0:0:0  1/1/0 SUN Priveleged mode disabled.
+    const isPrivilegeDisableEvent = data.includes("Priveleged mode disabled");
 
     if (isBadgeEvent) {
       handleBadgeEvent(data);
-    } else {
+    } else if (!isPrivilegeDisableEvent) {
       handleNonBadgeEvent(data);
     }
   });
