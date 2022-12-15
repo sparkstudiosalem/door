@@ -14,6 +14,7 @@ export default async function getDeviceUsers() {
 
   return runSession({
     command: SHOW_ALL_USERS,
+    isPrivileged: true,
     onData: (onComplete: (users: readonly User[]) => void, data: string) => {
       const nextUser = parseAccxUser(data);
 

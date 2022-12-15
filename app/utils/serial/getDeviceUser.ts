@@ -11,6 +11,7 @@ type User = components["schemas"]["User"];
 export default async function getDeviceUser(userId: string) {
   return runSession({
     command: SHOW_USER,
+    isPrivileged: true,
     params: [userId],
     onData: (onComplete: (user: User | undefined) => void, data: string) => {
       const nextUser = parseAccxUser(data);
