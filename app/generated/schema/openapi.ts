@@ -5,20 +5,20 @@
 
 
 export interface paths {
+  "/card/{cardPosition}": {
+    get: operations["cardGet"];
+    /** @description Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request. */
+    put: operations["cardPut"];
+    delete: operations["cardDelete"];
+  };
+  "/cards": {
+    get: operations["cardsGet"];
+  };
   "/status": {
     get: operations["statusGet"];
   };
   "/time": {
     get: operations["timeGet"];
-  };
-  "/user/{userId}": {
-    get: operations["userGet"];
-    /** @description Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request. */
-    put: operations["userPut"];
-    delete: operations["userDelete"];
-  };
-  "/users": {
-    get: operations["usersGet"];
   };
 }
 
@@ -34,6 +34,12 @@ export interface components {
       readonly sirenState: "activated" | "delayed" | "disarmed";
     };
     readonly Badge: string;
+    readonly Card: {
+      readonly badge: components["schemas"]["Badge"];
+      readonly id: components["schemas"]["CardPosition"];
+      readonly permissions: components["schemas"]["Permissions"];
+    };
+    readonly CardPosition: string;
     /**
      * Format: date-time 
      * @example 2020-01-01T00:00:00.000Z
@@ -49,14 +55,8 @@ export interface components {
       readonly isOpen: boolean;
     };
     readonly ErrorResponse: string;
-    readonly User: {
-      readonly badge: components["schemas"]["Badge"];
-      readonly id: components["schemas"]["UserId"];
-      readonly userMask: components["schemas"]["UserMask"];
-    };
-    readonly UserId: string;
-    /** @description A UserMask is a byte value between 0 and 255 that may be used in user operations to apply actions to large swaths of users simultaneously, instead of applying updates user-by-user. */
-    readonly UserMask: number;
+    /** @description A Permission is a byte value between 0 and 255 that can be used to group cards into groups of behavior. */
+    readonly Permissions: number;
   };
   responses: never;
   parameters: never;
@@ -69,6 +69,87 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  cardGet: {
+    parameters: {
+      readonly path: {
+        cardPosition: components["schemas"]["CardPosition"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": components["schemas"]["Card"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  cardPut: {
+    /** @description Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request. */
+    parameters: {
+      readonly path: {
+        cardPosition: components["schemas"]["CardPosition"];
+      };
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly "application/json": {
+          readonly badge: components["schemas"]["Badge"];
+          readonly currentBadge: components["schemas"]["Badge"];
+          readonly permissions: components["schemas"]["Permissions"];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      204: never;
+      /** @description Bad Request */
+      400: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  cardDelete: {
+    parameters: {
+      readonly path: {
+        cardPosition: components["schemas"]["CardPosition"];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: never;
+      /** @description Not Found */
+      404: {
+        content: {
+          readonly "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  cardsGet: {
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          readonly "application/json": readonly (components["schemas"]["Card"])[];
+        };
+      };
+    };
+  };
   statusGet: {
     responses: {
       /** @description OK */
@@ -85,91 +166,6 @@ export interface operations {
       200: {
         content: {
           readonly "application/json": components["schemas"]["DateTime"];
-        };
-      };
-    };
-  };
-  userGet: {
-    parameters: {
-      readonly path: {
-        userId: components["schemas"]["UserId"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          readonly "application/json": components["schemas"]["User"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        content: {
-          readonly "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-    };
-  };
-  userPut: {
-    /** @description Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request. */
-    parameters: {
-      readonly path: {
-        userId: components["schemas"]["UserId"];
-      };
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly "application/json": {
-          readonly badge: components["schemas"]["Badge"];
-          readonly currentBadge: components["schemas"]["Badge"];
-          readonly userMask: components["schemas"]["UserMask"];
-        };
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          readonly "application/json": components["schemas"]["User"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        content: {
-          readonly "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        content: {
-          readonly "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-    };
-  };
-  userDelete: {
-    parameters: {
-      readonly path: {
-        userId: components["schemas"]["UserId"];
-      };
-    };
-    responses: {
-      /** @description No Content */
-      204: never;
-      /** @description Not Found */
-      404: {
-        content: {
-          readonly "application/json": components["schemas"]["ErrorResponse"];
-        };
-      };
-    };
-  };
-  usersGet: {
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          readonly "application/json": readonly (components["schemas"]["User"])[];
         };
       };
     };

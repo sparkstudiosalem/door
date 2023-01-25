@@ -1,14 +1,14 @@
 import { operations } from "../generated/schema/openapi";
 import { OpenAPIHandler } from "../types/openapi";
-import updateDeviceUser from "../utils/serial/updateDeviceUser";
+import updateDeviceCard from "../utils/serial/updateDeviceCard";
 
-export default (async function userPut(req, res) {
+export default (async function cardPut(req, res) {
   try {
-    const isSuccessful = await updateDeviceUser(
-      req.params.userId,
+    const isSuccessful = await updateDeviceCard(
+      req.params.cardPosition,
       req.body.currentBadge,
       req.body.badge,
-      req.body.userMask
+      req.body.permissions
     );
 
     if (isSuccessful) {
@@ -19,4 +19,4 @@ export default (async function userPut(req, res) {
   } catch {
     res.sendStatus(400);
   }
-} as OpenAPIHandler<operations, "userPut">);
+} as OpenAPIHandler<operations, "cardPut">);

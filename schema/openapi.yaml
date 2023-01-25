@@ -32,18 +32,18 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/DateTime"
-  /user/{userId}:
+  /card/{cardPosition}:
     delete:
-      operationId: userDelete
-      x-eov-operation-handler: userDelete
+      operationId: cardDelete
+      x-eov-operation-handler: cardDelete
       tags:
-        - Users
+        - Cards
       parameters:
-        - name: userId
+        - name: cardPosition
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/UserId'
+            $ref: '#/components/schemas/CardPosition'
       responses:
         204:
           description: No Content
@@ -54,23 +54,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     get:
-      operationId: userGet
-      x-eov-operation-handler: userGet
+      operationId: cardGet
+      x-eov-operation-handler: cardGet
       tags:
-        - Users
+        - Cards
       parameters:
-        - name: userId
+        - name: cardPosition
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/UserId'
+            $ref: '#/components/schemas/CardPosition'
       responses:
         200:
           description: OK
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Card'
         404:
           description: Not Found
           content:
@@ -78,18 +78,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     put:
-      operationId: userPut
-      x-eov-operation-handler: userPut
+      operationId: cardPut
+      x-eov-operation-handler: cardPut
       tags:
-        - Users
+        - Cards
       description: >-
-        Update an existing user, changing their userMask or badge. In order to prevent accidentally overwriting an existing user's entry the user's current badge value must also be submitted as part of this request.
+        Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request.
       parameters:
-        - name: userId
+        - name: cardPosition
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/UserId'
+            $ref: '#/components/schemas/CardPosition'
       requestBody:
         required: true
         content:
@@ -101,12 +101,12 @@ paths:
                   $ref: '#/components/schemas/Badge'
                 currentBadge:
                   $ref: '#/components/schemas/Badge'
-                userMask:
-                  $ref: '#/components/schemas/UserMask'
+                permissions:
+                  $ref: '#/components/schemas/Permissions'
               required:
                 - badge
                 - currentBadge
-                - userMask
+                - permissions
       responses:
         204:
           description: OK
@@ -122,10 +122,10 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /users:
+  /cards:
     get:
-      operationId: usersGet
-      x-eov-operation-handler: usersGet
+      operationId: cardsGet
+      x-eov-operation-handler: cardsGet
       responses:
         200:
           description: OK
@@ -134,7 +134,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/Card"
 components:
   schemas:
     Alarm:
@@ -193,24 +193,24 @@ components:
       type: string
     Badge:
       type: string
-    User:
+    Card:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UserId'
+          $ref: '#/components/schemas/CardPosition'
         badge:
           $ref: '#/components/schemas/Badge'
-        userMask:
-          $ref: '#/components/schemas/UserMask'
+        permissions:
+          $ref: '#/components/schemas/Permissions'
       required:
         - id
-        - userMask
+        - permissions
         - badge
-    UserId:
+    CardPosition:
       type: string
-    UserMask:
+    Permissions:
       type: integer
       minimum: 0
       maximum: 255
       description: >-
-        A UserMask is a byte value between 0 and 255 that may be used in user operations to apply actions to large swaths of users simultaneously, instead of applying updates user-by-user.
+        A Permission is a byte value between 0 and 255 that can be used to group cards into groups of behavior.
