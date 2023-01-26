@@ -195,6 +195,9 @@
       "get": {
         "operationId": "cardsGet",
         "x-eov-operation-handler": "cardsGet",
+        "tags": [
+          "Cards"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -298,7 +301,7 @@
       "Card": {
         "type": "object",
         "properties": {
-          "id": {
+          "position": {
             "$ref": "#/components/schemas/CardPosition"
           },
           "badge": {

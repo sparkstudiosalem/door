@@ -4,8 +4,9 @@ import * as swaggerUi from "swagger-ui-express";
 import * as OpenApiValidator from "express-openapi-validator";
 import schema from "./generated/schema/openapi.json";
 import * as _handlers from "./handlers/index";
+import { Express } from "express";
 
-export default function createApp() {
+export default function createApp(): Express {
   const app = express();
 
   // Serve OpenAPI schema
