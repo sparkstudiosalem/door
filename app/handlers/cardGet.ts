@@ -3,7 +3,7 @@ import { OpenAPIHandler } from "../types/openapi";
 import getDeviceCard from "../utils/serial/getDeviceCard";
 
 export default (async function cardGet(req, res) {
-  const card = await getDeviceCard(req.params.cardPosition);
+  const card = await getDeviceCard(req.params.card_position);
 
   if (!card) {
     res.sendStatus(404);

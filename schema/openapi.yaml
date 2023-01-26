@@ -32,14 +32,14 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/DateTime"
-  /card/{cardPosition}:
+  /card/{card_position}:
     delete:
       operationId: cardDelete
       x-eov-operation-handler: cardDelete
       tags:
         - Cards
       parameters:
-        - name: cardPosition
+        - name: card_position
           in: path
           required: true
           schema:
@@ -59,7 +59,7 @@ paths:
       tags:
         - Cards
       parameters:
-        - name: cardPosition
+        - name: card_position
           in: path
           required: true
           schema:
@@ -83,9 +83,9 @@ paths:
       tags:
         - Cards
       description: >-
-        Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request.
+        Update an existing card slot, changing its permissions group or card number. In order to prevent accidentally overwriting an existing card entry the current card value must also be submitted as part of this request.
       parameters:
-        - name: cardPosition
+        - name: card_position
           in: path
           required: true
           schema:
@@ -97,15 +97,15 @@ paths:
             schema:
               type: object
               properties:
-                badge:
-                  $ref: '#/components/schemas/Badge'
-                currentBadge:
-                  $ref: '#/components/schemas/Badge'
+                card_number:
+                  $ref: '#/components/schemas/CardNumber'
+                current_card_number:
+                  $ref: '#/components/schemas/CardNumber'
                 permissions:
                   $ref: '#/components/schemas/Permissions'
               required:
-                - badge
-                - currentBadge
+                - card_number
+                - current_card_number
                 - permissions
       responses:
         204:
@@ -126,6 +126,8 @@ paths:
     get:
       operationId: cardsGet
       x-eov-operation-handler: cardsGet
+      tags:
+        - Cards
       responses:
         200:
           description: OK
@@ -142,22 +144,22 @@ components:
       properties:
         id:
           type: string
-        armedState:
+        armed_state:
           type: string
           enum:
             - armed
             - chimeOnly
             - disarmed
-        sirenState:
+        siren_state:
           type: string
           enum:
             - activated
             - delayed
             - disarmed
       required:
-        - armedState
+        - armed_state
         - id
-        - sirenState
+        - siren_state
     DateTime:
       type: string
       format: date-time
@@ -181,31 +183,31 @@ components:
       properties:
         id:
           type: string
-        isLocked:
+        is_locked:
           type: boolean
-        isOpen:
+        is_open:
           type: boolean
       required:
         - id
-        - isLocked
-        - isOpen
+        - is_locked
+        - is_open
     ErrorResponse:
-      type: string
-    Badge:
       type: string
     Card:
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/CardPosition'
-        badge:
-          $ref: '#/components/schemas/Badge'
+        card_number:
+          $ref: '#/components/schemas/CardNumber'
         permissions:
           $ref: '#/components/schemas/Permissions'
+        position:
+          $ref: '#/components/schemas/CardPosition'
       required:
-        - id
+        - card_number
         - permissions
-        - badge
+        - position
+    CardNumber:
+      type: string
     CardPosition:
       type: string
     Permissions:

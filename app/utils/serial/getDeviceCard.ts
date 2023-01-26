@@ -1,7 +1,7 @@
 import parseAccxCard from "../parseAccxCard";
 import { runSession } from "./serial";
 import { Card, CARD_SHOW } from "./constants";
-import validateUserBadge from "../validateCardBadge";
+import validateCard from "../validateCard";
 
 export default async function getDeviceCard(cardPosition: string) {
   return runSession({
@@ -19,7 +19,7 @@ export default async function getDeviceCard(cardPosition: string) {
     }) => {
       const nextCard = parseAccxCard(data);
 
-      if (validateUserBadge(nextCard)) {
+      if (validateCard(nextCard)) {
         onComplete(nextCard);
       } else {
         onError();

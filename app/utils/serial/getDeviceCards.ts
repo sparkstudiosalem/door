@@ -2,7 +2,7 @@ import parseAccxCard from "../parseAccxCard";
 import { runSession } from "./serial";
 import createLogger from "../createLogger";
 import { MAX_CARDS, Card, CARDS_SHOW } from "./constants";
-import validateCardBadge from "../validateCardBadge";
+import validateCard from "../validateCard";
 import { isCard } from "../isCard";
 
 const log = createLogger(__filename);
@@ -23,7 +23,7 @@ export default async function getDeviceCards() {
     }) => {
       const nextCard = parseAccxCard(data);
 
-      if (isCard(nextCard) && validateCardBadge(nextCard)) {
+      if (isCard(nextCard) && validateCard(nextCard)) {
         cards = [...cards, nextCard];
       } else {
         ignoredCardCount += 1;

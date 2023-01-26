@@ -25,12 +25,12 @@ export default function parseAccxCard(
     return undefined;
   }
 
-  const [position, permissions, badge] = cardParts;
-  if (!position || !permissions || !badge) {
+  const [position, permissions, card_number] = cardParts;
+  if (!position || !permissions || !card_number) {
     log.error(
       `Unrecognized ACCX card format ${JSON.stringify(
         accxCardString
-      )}; missing id, permissions, or badge`
+      )}; missing card_number, permissions, or position`
     );
 
     return undefined;
@@ -42,8 +42,8 @@ export default function parseAccxCard(
   }
 
   return {
-    position,
+    card_number,
     permissions: parseInt(permissions, 10),
-    badge,
+    position,
   };
 }

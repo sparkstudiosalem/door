@@ -5,9 +5,9 @@
 
 
 export interface paths {
-  "/card/{cardPosition}": {
+  "/card/{card_position}": {
     get: operations["cardGet"];
-    /** @description Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request. */
+    /** @description Update an existing card slot, changing its permissions group or card number. In order to prevent accidentally overwriting an existing card entry the current card value must also be submitted as part of this request. */
     put: operations["cardPut"];
     delete: operations["cardDelete"];
   };
@@ -28,17 +28,17 @@ export interface components {
   schemas: {
     readonly Alarm: {
       /** @enum {string} */
-      readonly armedState: "armed" | "chimeOnly" | "disarmed";
+      readonly armed_state: "armed" | "chimeOnly" | "disarmed";
       readonly id: string;
       /** @enum {string} */
-      readonly sirenState: "activated" | "delayed" | "disarmed";
+      readonly siren_state: "activated" | "delayed" | "disarmed";
     };
-    readonly Badge: string;
     readonly Card: {
-      readonly badge: components["schemas"]["Badge"];
+      readonly card_number: components["schemas"]["CardNumber"];
       readonly permissions: components["schemas"]["Permissions"];
-      readonly position?: components["schemas"]["CardPosition"];
+      readonly position: components["schemas"]["CardPosition"];
     };
+    readonly CardNumber: string;
     readonly CardPosition: string;
     /**
      * Format: date-time 
@@ -51,8 +51,8 @@ export interface components {
     };
     readonly Door: {
       readonly id: string;
-      readonly isLocked: boolean;
-      readonly isOpen: boolean;
+      readonly is_locked: boolean;
+      readonly is_open: boolean;
     };
     readonly ErrorResponse: string;
     /** @description A Permission is a byte value between 0 and 255 that can be used to group cards into groups of behavior. */
@@ -72,7 +72,7 @@ export interface operations {
   cardGet: {
     parameters: {
       readonly path: {
-        cardPosition: components["schemas"]["CardPosition"];
+        card_position: components["schemas"]["CardPosition"];
       };
     };
     responses: {
@@ -91,17 +91,17 @@ export interface operations {
     };
   };
   cardPut: {
-    /** @description Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request. */
+    /** @description Update an existing card slot, changing its permissions group or card number. In order to prevent accidentally overwriting an existing card entry the current card value must also be submitted as part of this request. */
     parameters: {
       readonly path: {
-        cardPosition: components["schemas"]["CardPosition"];
+        card_position: components["schemas"]["CardPosition"];
       };
     };
     readonly requestBody: {
       readonly content: {
         readonly "application/json": {
-          readonly badge: components["schemas"]["Badge"];
-          readonly currentBadge: components["schemas"]["Badge"];
+          readonly card_number: components["schemas"]["CardNumber"];
+          readonly current_card_number: components["schemas"]["CardNumber"];
           readonly permissions: components["schemas"]["Permissions"];
         };
       };
@@ -126,7 +126,7 @@ export interface operations {
   cardDelete: {
     parameters: {
       readonly path: {
-        cardPosition: components["schemas"]["CardPosition"];
+        card_position: components["schemas"]["CardPosition"];
       };
     };
     responses: {

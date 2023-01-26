@@ -5,9 +5,9 @@ import updateDeviceCard from "../utils/serial/updateDeviceCard";
 export default (async function cardPut(req, res) {
   try {
     const isSuccessful = await updateDeviceCard(
-      req.params.cardPosition,
-      req.body.currentBadge,
-      req.body.badge,
+      req.params.card_position,
+      req.body.current_card_number,
+      req.body.card_number,
       req.body.permissions
     );
 

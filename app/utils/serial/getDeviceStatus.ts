@@ -57,24 +57,24 @@ export function parseDeviceStatus(lines: readonly string[]) {
       const partialAlarm = acc[alarmIndex] || createPartialAlarm(alarmIndex);
 
       if (line.startsWith("Alarm armed state")) {
-        const armedState = line.split(":")[1];
+        const armed_state = line.split(":")[1];
 
-        if (armedState === "0") {
-          partialAlarm.armedState = "disarmed";
-        } else if (armedState === "1") {
-          partialAlarm.armedState = "armed";
-        } else if (armedState === "4") {
-          partialAlarm.armedState = "chimeOnly";
+        if (armed_state === "0") {
+          partialAlarm.armed_state = "disarmed";
+        } else if (armed_state === "1") {
+          partialAlarm.armed_state = "armed";
+        } else if (armed_state === "4") {
+          partialAlarm.armed_state = "chimeOnly";
         }
       } else if (line.startsWith("Alarm siren state") && partialAlarm) {
-        const sirenState = line.split(":")[1];
+        const siren_state = line.split(":")[1];
 
-        if (sirenState === "0") {
-          partialAlarm.sirenState = "disarmed";
-        } else if (sirenState === "1") {
-          partialAlarm.sirenState = "activated";
-        } else if (sirenState === "2") {
-          partialAlarm.sirenState = "delayed";
+        if (siren_state === "0") {
+          partialAlarm.siren_state = "disarmed";
+        } else if (siren_state === "1") {
+          partialAlarm.siren_state = "activated";
+        } else if (siren_state === "2") {
+          partialAlarm.siren_state = "delayed";
         }
       }
 
@@ -103,7 +103,7 @@ export function parseDeviceStatus(lines: readonly string[]) {
 
       const partialDoor = acc[doorIndex] || createPartialDoor(doorIndex);
       const doorOpenState = line.split(":")[1];
-      partialDoor.isOpen = doorOpenState !== "0";
+      partialDoor.is_open = doorOpenState !== "0";
       acc[doorIndex] = partialDoor;
     } else if (line.includes("unlocked state")) {
       let doorIndex: number | undefined = undefined;
@@ -119,7 +119,7 @@ export function parseDeviceStatus(lines: readonly string[]) {
 
       const partialDoor = acc[doorIndex] || createPartialDoor(doorIndex);
       const doorLockedState = line.split(":")[1];
-      partialDoor.isLocked = doorLockedState === "1";
+      partialDoor.is_locked = doorLockedState === "1";
       acc[doorIndex] = partialDoor;
       return acc;
     }
@@ -152,7 +152,7 @@ function validateDeviceStatus({ alarms, doors }: DeviceStatus): boolean {
 
   if (
     alarms.some((alarm) => {
-      return alarm.armedState === undefined || alarm.sirenState === undefined;
+      return alarm.armed_state === undefined || alarm.siren_state === undefined;
     })
   ) {
     return false;
@@ -164,7 +164,7 @@ function validateDeviceStatus({ alarms, doors }: DeviceStatus): boolean {
 
   if (
     doors.some((door) => {
-      return door.isLocked === undefined || door.isOpen === undefined;
+      return door.is_locked === undefined || door.is_open === undefined;
     })
   ) {
     return false;

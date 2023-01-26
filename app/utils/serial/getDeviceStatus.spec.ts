@@ -15,20 +15,20 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            armedState: "chimeOnly",
-            sirenState: "disarmed",
+            armed_state: "chimeOnly",
+            siren_state: "disarmed",
           },
         ],
         doors: [
           {
             id: "0",
-            isLocked: true,
-            isOpen: false,
+            is_locked: true,
+            is_open: false,
           },
           {
             id: "1",
-            isLocked: false,
-            isOpen: false,
+            is_locked: false,
+            is_open: false,
           },
         ],
       },
@@ -41,7 +41,7 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            armedState: "disarmed",
+            armed_state: "disarmed",
           },
         ],
         doors: [],
@@ -53,7 +53,7 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            armedState: "armed",
+            armed_state: "armed",
           },
         ],
         doors: [],
@@ -65,7 +65,7 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            armedState: "chimeOnly",
+            armed_state: "chimeOnly",
           },
         ],
         doors: [],
@@ -79,7 +79,7 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            sirenState: "disarmed",
+            siren_state: "disarmed",
           },
         ],
         doors: [],
@@ -91,7 +91,7 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            sirenState: "activated",
+            siren_state: "activated",
           },
         ],
         doors: [],
@@ -103,14 +103,14 @@ describe("parseDeviceStatus", () => {
         alarms: [
           {
             id: "0",
-            sirenState: "delayed",
+            siren_state: "delayed",
           },
         ],
         doors: [],
       },
     ],
 
-    // Door isOpen State (Named doors; "Front door" / "Roll up door")
+    // Door is_open State (Named doors; "Front door" / "Roll up door")
     [
       ["Front door open state (0=closed):0"],
       {
@@ -118,7 +118,7 @@ describe("parseDeviceStatus", () => {
         doors: [
           {
             id: "0",
-            isOpen: false,
+            is_open: false,
           },
         ],
       },
@@ -130,7 +130,7 @@ describe("parseDeviceStatus", () => {
         doors: [
           {
             id: "0",
-            isOpen: true,
+            is_open: true,
           },
         ],
       },
@@ -142,13 +142,13 @@ describe("parseDeviceStatus", () => {
         doors: [
           {
             id: "1",
-            isOpen: false,
+            is_open: false,
           },
         ],
       },
     ],
 
-    // Door isLocked State (Numbered doors; "Door 1", "Door 2")
+    // Door is_locked State (Numbered doors; "Door 1", "Door 2")
     [
       ["Door 1 unlocked state(1=locked):0"],
       {
@@ -156,7 +156,7 @@ describe("parseDeviceStatus", () => {
         doors: [
           {
             id: "0",
-            isLocked: false,
+            is_locked: false,
           },
         ],
       },
@@ -168,7 +168,7 @@ describe("parseDeviceStatus", () => {
         doors: [
           {
             id: "0",
-            isLocked: true,
+            is_locked: true,
           },
         ],
       },

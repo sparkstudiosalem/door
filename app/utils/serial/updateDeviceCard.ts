@@ -5,13 +5,13 @@ import getDeviceCard from "./getDeviceCard";
 
 export default async function updateDeviceCard(
   cardPosition: string,
-  currentBadge: string,
+  currentCardNumber: string,
   badge: string,
   permissions: number
 ) {
   const currentCard = await getDeviceCard(cardPosition);
 
-  if (!currentCard || currentCard.badge !== currentBadge) {
+  if (!currentCard || currentCard.card_number !== currentCardNumber) {
     return Promise.reject();
   }
 

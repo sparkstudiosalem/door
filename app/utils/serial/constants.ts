@@ -19,7 +19,7 @@ export type COMMANDS =
 // When a user is removed from the roster the slot is maintained, and the
 // tag is set to this default value.
 // https://en.wikipedia.org/wiki/4,294,967,295
-export const BLANK_BADGE = "4294967295"; // FFFF_FFFF
+export const BLANK_CARD_NUMBER = "4294967295"; // FFFF_FFFF
 
 export const MAX_CARDS = 200;
 

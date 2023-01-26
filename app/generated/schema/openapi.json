@@ -49,7 +49,7 @@
         }
       }
     },
-    "/card/{cardPosition}": {
+    "/card/{card_position}": {
       "delete": {
         "operationId": "cardDelete",
         "x-eov-operation-handler": "cardDelete",
@@ -58,7 +58,7 @@
         ],
         "parameters": [
           {
-            "name": "cardPosition",
+            "name": "card_position",
             "in": "path",
             "required": true,
             "schema": {
@@ -90,7 +90,7 @@
         ],
         "parameters": [
           {
-            "name": "cardPosition",
+            "name": "card_position",
             "in": "path",
             "required": true,
             "schema": {
@@ -127,10 +127,10 @@
         "tags": [
           "Cards"
         ],
-        "description": "Update an existing card slot, changing its permissions group or badge number. In order to prevent accidentally overwriting an existing card entry the current badge value must also be submitted as part of this request.",
+        "description": "Update an existing card slot, changing its permissions group or card number. In order to prevent accidentally overwriting an existing card entry the current card value must also be submitted as part of this request.",
         "parameters": [
           {
-            "name": "cardPosition",
+            "name": "card_position",
             "in": "path",
             "required": true,
             "schema": {
@@ -145,19 +145,19 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "badge": {
-                    "$ref": "#/components/schemas/Badge"
+                  "card_number": {
+                    "$ref": "#/components/schemas/CardNumber"
                   },
-                  "currentBadge": {
-                    "$ref": "#/components/schemas/Badge"
+                  "current_card_number": {
+                    "$ref": "#/components/schemas/CardNumber"
                   },
                   "permissions": {
                     "$ref": "#/components/schemas/Permissions"
                   }
                 },
                 "required": [
-                  "badge",
-                  "currentBadge",
+                  "card_number",
+                  "current_card_number",
                   "permissions"
                 ]
               }
@@ -224,7 +224,7 @@
           "id": {
             "type": "string"
           },
-          "armedState": {
+          "armed_state": {
             "type": "string",
             "enum": [
               "armed",
@@ -232,7 +232,7 @@
               "disarmed"
             ]
           },
-          "sirenState": {
+          "siren_state": {
             "type": "string",
             "enum": [
               "activated",
@@ -242,9 +242,9 @@
           }
         },
         "required": [
-          "armedState",
+          "armed_state",
           "id",
-          "sirenState"
+          "siren_state"
         ]
       },
       "DateTime": {
@@ -279,43 +279,43 @@
           "id": {
             "type": "string"
           },
-          "isLocked": {
+          "is_locked": {
             "type": "boolean"
           },
-          "isOpen": {
+          "is_open": {
             "type": "boolean"
           }
         },
         "required": [
           "id",
-          "isLocked",
-          "isOpen"
+          "is_locked",
+          "is_open"
         ]
       },
       "ErrorResponse": {
         "type": "string"
       },
-      "Badge": {
-        "type": "string"
-      },
       "Card": {
         "type": "object",
         "properties": {
-          "position": {
-            "$ref": "#/components/schemas/CardPosition"
-          },
-          "badge": {
-            "$ref": "#/components/schemas/Badge"
+          "card_number": {
+            "$ref": "#/components/schemas/CardNumber"
           },
           "permissions": {
             "$ref": "#/components/schemas/Permissions"
+          },
+          "position": {
+            "$ref": "#/components/schemas/CardPosition"
           }
         },
         "required": [
-          "id",
+          "card_number",
           "permissions",
-          "badge"
+          "position"
         ]
+      },
+      "CardNumber": {
+        "type": "string"
       },
       "CardPosition": {
         "type": "string"
