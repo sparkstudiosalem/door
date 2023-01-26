@@ -36,8 +36,8 @@ export interface components {
     readonly Badge: string;
     readonly Card: {
       readonly badge: components["schemas"]["Badge"];
-      readonly id: components["schemas"]["CardPosition"];
       readonly permissions: components["schemas"]["Permissions"];
+      readonly position?: components["schemas"]["CardPosition"];
     };
     readonly CardPosition: string;
     /**

@@ -25,8 +25,8 @@ export default function parseAccxCard(
     return undefined;
   }
 
-  const [id, permissions, badge] = cardParts;
-  if (!id || !permissions || !badge) {
+  const [position, permissions, badge] = cardParts;
+  if (!position || !permissions || !badge) {
     log.error(
       `Unrecognized ACCX card format ${JSON.stringify(
         accxCardString
@@ -36,13 +36,13 @@ export default function parseAccxCard(
     return undefined;
   }
 
-  if (id.includes(":")) {
-    log.info(`Ignoring id including colon ${id}`);
+  if (position.includes(":")) {
+    log.info(`Ignoring id including colon ${position}`);
     return undefined;
   }
 
   return {
-    id,
+    position,
     permissions: parseInt(permissions, 10),
     badge,
   };
